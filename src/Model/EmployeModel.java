@@ -82,35 +82,25 @@ public class EmployeModel {
             tab[i][7] = empl.getPoste();
             tab[i][8] = empl.getBalance(); // Ajout de la balance
         }
-
         return tab;
     }
     private boolean checkFileExits(File file) {
-
         if(!file.exists()) {
             throw new IllegalArgumentException ("le fichier n'existe pas "+file.getPath());
-
         }
         return true;
-
     }
     private boolean checkIsFile(File file) {
-
         if(!file.isFile()) {
             throw new IllegalArgumentException ("le chemin specifie nest pas un fichier "+file.getPath());
-
         }
         return true;
-
     }
     private boolean checkIsReadebal(File file) {
-
         if(!file.canRead()) {
             throw new IllegalArgumentException ("le chemin specifie nest pas lisibles "+file.getPath());
-
         }
         return true;
-
     }
     public void importData(String FileName) {
         File file = new File(FileName);
@@ -119,7 +109,6 @@ public class EmployeModel {
         checkIsReadebal(file);
         dao.importData(FileName);
     }
-
     public void exportData(String FileName , List<Employe> data) throws IOException {
         File file = new File(FileName);
         checkFileExits(file);

@@ -1,12 +1,15 @@
 package DAO;
 
+import Model.Employe;
 import Model.Holiday;
 import Model.Type;
+
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HolidayDAOImpl {
+public class HolidayDAOImpl implements DataImportExport<Holiday>{
 
     private static connexion conn;
 
@@ -259,4 +262,50 @@ public class HolidayDAOImpl {
         }
         return holidays;
     }
+    @Override
+    public void importData(String filePath) {
+        String sql = "INSERT INTO holiday (employeId, type, startdate, enddate) VALUES (?, ?, ?, ?)";
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath)); PreparedStatement stmt = connexion.getConnexion().prepareStatement(sql)) {
+            String line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                System.out.println("la long de data :" + data.length);
+                if (data.length == 4) {
+
+                    stmt.setInt(1,  Integer.parseInt(data[0].trim()));
+                    stmt.setString(2, data[1].trim());
+                    stmt.setString(3, data[2].trim());
+                    stmt.setString(4, data[3].trim());
+
+                    stmt.addBatch();
+                }
+                stmt.executeBatch();
+            }
+            System.out.println("Holiday imported successfully !");
+
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void exportData(String fileName, List<Holiday> data) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("employeId, type, startdate, enddate");
+            writer.newLine();
+            for (Holiday h : data) {
+                String line = String.format("%d,%s,%s,%s",
+                        h.getEmployeId(),
+                        h.getType(),
+                        h.getStartDate(),
+                        h.getEndDate()
+
+                );
+
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
 }
+

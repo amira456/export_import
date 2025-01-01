@@ -17,7 +17,8 @@ public class HolidayView extends JPanel {
     private JButton modifier = new JButton("Modifier "); // Nouveau bouton pour modifier
     private JButton supprimer = new JButton("Supprimer ");
     private JButton afficher = new JButton("Afficher");
-
+    JButton exporter = new JButton("export");
+    JButton importer = new JButton("import");
     // Labels
     private JLabel employeLabel = new JLabel("Employé:");
     private JLabel typeLabel = new JLabel("Type de Congé:");
@@ -59,6 +60,8 @@ public class HolidayView extends JPanel {
         pan4.add(modifier);
         pan4.add(supprimer);
         pan4.add(afficher);
+        pan4.add(exporter);
+        pan4.add(importer);
 
         // Table pour afficher les congés
         String[] columnNames = {"Id", "Employé", "Type de Congé", "Date de Début", "Date de Fin"};
@@ -171,5 +174,11 @@ public class HolidayView extends JPanel {
 
     public void setEndDate(String endDate) {
         endDateField.setText(endDate);
+    }
+    public JButton getExporter(){
+        return exporter;
+    }
+    public JButton getImporter(){
+        return importer;
     }
 }

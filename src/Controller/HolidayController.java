@@ -1,8 +1,12 @@
 package Controller;
 
+import DAO.EmployeDAOImp;
+import DAO.HolidayDAOImpl;
 import Model.*;
 import View.HolidayView;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -24,6 +28,8 @@ public class HolidayController {
         this.view.getSupprimerButton().addActionListener(e -> deleteHoliday());
         this.view.getModifierButton().addActionListener(e ->updateHoliday());
         this.view.getAfficherButton().addActionListener(e -> showHolidays());
+        this.view.getExporter().addActionListener(e ->handleExport());
+        this.view.getImporter().addActionListener(e -> handleImport());
 
         // Ajouter un écouteur pour remplir les champs lors de la sélection dans la table
         this.view.getTable().getSelectionModel().addListSelectionListener(e -> {
@@ -153,6 +159,35 @@ public class HolidayController {
         } catch (ParseException e) {
             view.afficherMessageErreur("Format de date invalide.");
             return null;
+        }
+    }
+    public void handleImport() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Fichiers CSV", "csv", "txt"));
+
+        if (fileChooser.showOpenDialog(view) == JFileChooser.APPROVE_OPTION) {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            model.importData(filePath); // Remplacement de employeModel par model
+            view.afficherMessageSucces("Importation réussie !");
+        }
+    }
+
+    public void handleExport() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Fichiers CSV", "csv"));
+
+        if (fileChooser.showSaveDialog(view) == JFileChooser.APPROVE_OPTION) {
+            try {
+                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                if (!filePath.toLowerCase().endsWith(".txt")) {
+                    filePath += ".txt";
+                }
+                List<Holiday> holidays =new HolidayDAOImpl().getAll();
+                model.exportData(filePath, holidays);
+                view.afficherMessageSucces("Exportation réussie !");
+            } catch (Exception ex) {
+                view.afficherMessageErreur("Une erreur inattendue est survenue : " + ex.getMessage());
+            }
         }
     }
 }
